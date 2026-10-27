@@ -81,9 +81,15 @@ const updateProduct = async (req, res) => {
 };
 
 const fetchAllProducts = async (req, res) => {
+  console.log("fetchAllProducts controller invoked");
   try {
+    
+
     const products = await getAllProducts();
-    res.status(200).json(products);
+   
+    return res.status(200).json({ items: products});
+
+    // fallback for older callers: return array directly    res.status(200).json(products);
   } catch (error) {
     console.error("Error fetching products:", error.message);
     res.status(500).json({ error: "Error fetching products", details: error.message });

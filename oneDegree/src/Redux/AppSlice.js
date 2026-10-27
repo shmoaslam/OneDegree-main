@@ -2,7 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   searchHome: "",
+  // product list plus pagination metadata
   allproduct: [],
+  productPage: 1,
+  productLimit: 9,
+  productTotal: 0, // total number of products in DB
   allstore: [],
   category: [],
   material: [],
@@ -22,10 +26,28 @@ export const AppSlice = createSlice({
       state.searchHome = action.payload;
     },
     setAllProducts: (state, action) => {
-      state.allproduct = action.payload;
+      // action.payload may be either an array (old behaviour) or an object
+      // containing { items, page, limit, total }.
+      if (Array.isArray(action.payload)) {
+        state.allproduct = action.payload;
+      } else {
+        state.allproduct = action.payload.items || [];
+        if (action.payload.page) state.productPage = action.payload.page;
+        if (action.payload.limit) state.productLimit = action.payload.limit;
+        if (action.payload.total !== undefined) state.productTotal = action.payload.total;
+      }
     },
     setAllStore: (state, action) => {
       state.allproduct = action.payload;
+    },
+    setProductPage: (state, action) => {
+      state.productPage = action.payload;
+    },
+    setProductLimit: (state, action) => {
+      state.productLimit = action.payload;
+    },
+    setProductTotal: (state, action) => {
+      state.productTotal = action.payload;
     },
     setCategory: (state, action) => {
       state.category = action.payload;
@@ -67,6 +89,9 @@ export const {
   setFrameType,
   setShape,
   setStore,
+  setProductPage,
+  setProductLimit,
+  setProductTotal,
 } = AppSlice.actions;
 
 export default AppSlice.reducer;

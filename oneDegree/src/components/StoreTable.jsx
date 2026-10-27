@@ -46,14 +46,18 @@ const StoreTable = ({ storeDataTable }) => {
                 <td className="px-6 py-4 text-center border-b">{data.city}</td>
                 <td className="px-6 py-4 text-center border-b">{data.pincode}</td>
                 <td className="px-6 py-4 text-center border-b">
-                  <a
-                    href={`https://www.google.com/maps/search/${data.store_address}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline text-3xl"
-                  >
-                    <LuMapPin />
-                  </a>
+                  {data.google_map ? (
+                    <a
+                      href={`${data.google_map}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline text-3xl"
+                    >
+                      <LuMapPin />
+                    </a>
+                  ) : (
+                    <span></span>
+                  )}
                 </td>
               </tr>
             ))

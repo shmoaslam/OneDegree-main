@@ -24,12 +24,14 @@ import joi81Dekstop from "../assets/collectionBanners/joi8dekstop.jpg";
 import rare63Dekstop from "../assets/collectionBanners/rare63dekstop.jpg";
 import red1670Dekstop from "../assets/collectionBanners/red1670dekstop.jpg";
 import light55Dekstop from "../assets/collectionBanners/light55dekstop.jpg";
+import pure1910desktop from "../assets/collectionBanners/pure1910desktop.jpg";
 
 import ti22mobile from "../assets/collectionBanners/ti22mobile.jpg";
 import joi81mobile from "../assets/collectionBanners/joi81mobile.jpg";
 import rare63mobile from "../assets/collectionBanners/rare63mobile.jpg";
 import red1670mobile from "../assets/collectionBanners/red1670mobile.jpg";
 import light55mobile from "../assets/collectionBanners/light55mobile.jpg";
+import pure1910mobile from "../assets/collectionBanners/pure1910mobile.jpg";
 
 export const slides = [
   {
@@ -156,6 +158,10 @@ export const collectionImagesDekstop = [
     id: 5,
     url: light55Dekstop,
   },
+  {
+    id: 6,
+    url: pure1910desktop,
+  }
 ];
 
 export const collectionImageMobile = [
@@ -179,4 +185,8 @@ export const collectionImageMobile = [
     id: 5,
     url: light55mobile,
   },
+    {
+    id: 6,
+    url: pure1910mobile,
+  }
 ];

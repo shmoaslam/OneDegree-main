@@ -1,5 +1,18 @@
 const pool = require("./db");
 
+// NOTE: queries in this model join across several tables. For acceptable
+// performance on large product catalogs you should have proper indexes in
+// the database. At a minimum, make sure there are indexes on the following
+// columns:
+//   * products.category_id, products.material_id, products.collection_id,
+//     products.finishing_id, products.shape_id, products.frame_type_id
+//   * product_colors.product_id, product_colors.color_id
+//   * product_images.product_color_id
+// Adding these via a migration or directly in MySQL will drastically reduce
+// the time spent scanning tables during the joins. You should also consider
+// a compound index on (product_id, product_color_id) where appropriate.
+
+
 // Add a new product
 const addProduct = async (
   name,
@@ -68,10 +81,13 @@ const addProductImages = async (product_color_id, images) => {
   }
 };
 
+// options is an object that may include pagination values { page, limit }.
+// Defaults return all products when options are omitted, but for large datasets
+// clients should supply a page/limit to avoid retrieving every row.
 const getAllProducts = async () => {
-  // Run all queries in parallel to improve performance
-  const [products, colors, images] = await Promise.all([
-    pool.query(`
+
+
+  let productQuery = `
       SELECT 
           p.product_id, 
           p.name AS product_name, 
@@ -95,35 +111,56 @@ const getAllProducts = async () => {
       JOIN finishing f ON p.finishing_id = f.finishing_id
       JOIN shape s ON p.shape_id = s.shape_id
       JOIN frame_type ft ON p.frame_type_id = ft.frame_type_id
-    `),
+      ORDER BY p.name
+  `;
 
-    pool.query(`
-      SELECT 
+
+  const [productsResult] = await pool.query(productQuery);
+  const productList = productsResult;
+
+  // If there are no products on this page, return empty array early
+  if (productList.length === 0) {
+    return [];
+  }
+
+  // Build id lists for the subsequent queries so we only fetch related colors/images
+  const productIds = productList.map(p => p.product_id);
+
+  // Fetch colors for the products on the current page
+  const [colorsResult] = await pool.query(
+    `SELECT 
         pc.product_id, 
         pc.product_color_id, 
         co.color_name, 
         co.color_code
       FROM product_colors pc
       JOIN colors co ON pc.color_id = co.color_id
-    `),
+      WHERE pc.product_id IN (?);
+    `,
+    [productIds]
+  );
+  const colorList = colorsResult;
 
-    pool.query(`
-      SELECT 
-        pi.product_color_id, 
-        pi.image_id, 
-        pi.image_url, 
-        pi.image_order
-      FROM product_images pi
-      ORDER BY pi.image_order
-    `)
-  ]);
+  // Prepare list of color IDs to fetch images
+  const colorIds = colorList.map(c => c.product_color_id);
+  let imageList = [];
+  if (colorIds.length > 0) {
+    const [imagesResult] = await pool.query(
+      `SELECT 
+          pi.product_color_id, 
+          pi.image_id, 
+          pi.image_url, 
+          pi.image_order
+        FROM product_images pi
+        WHERE pi.product_color_id IN (? )
+        ORDER BY pi.image_order;
+      `,
+      [colorIds]
+    );
+    imageList = imagesResult;
+  }
 
-  // Convert arrays from MySQL response
-  const productList = products[0];
-  const colorList = colors[0];
-  const imageList = images[0];
-
-  // Create a Map for quick color lookup (product_id -> colors[])
+  // Create maps and assemble the final result like before
   const colorMap = new Map();
   for (const color of colorList) {
     if (!colorMap.has(color.product_id)) {
@@ -133,11 +170,10 @@ const getAllProducts = async () => {
       product_color_id: color.product_color_id,
       color_name: color.color_name,
       color_code: color.color_code,
-      images: [] // Will be populated next
+      images: []
     });
   }
 
-  // Create a Map for quick image lookup (product_color_id -> images[])
   const imageMap = new Map();
   for (const image of imageList) {
     if (!imageMap.has(image.product_color_id)) {
@@ -150,17 +186,15 @@ const getAllProducts = async () => {
     });
   }
 
-  // Attach images to the correct colors
   for (const [productId, productColors] of colorMap) {
     for (const color of productColors) {
-      color.images = imageMap.get(color.product_color_id) || []; // Assign images to corresponding colors
+      color.images = imageMap.get(color.product_color_id) || [];
     }
   }
 
-  // Attach colors to products and return
   return productList.map(product => ({
     ...product,
-    colors: colorMap.get(product.product_id) || [] // Attach colors or empty array
+    colors: colorMap.get(product.product_id) || []
   }));
 };
 

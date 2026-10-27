@@ -7,7 +7,7 @@ const InstagramPost = () => {
   const [loading, setLoading] = useState(true);
 
   const ACCESS_TOKEN =
-    "IGAAdfPZCw6k9xBZAFlscUVBb0RoTzhjMHMyVVdKZAE43ZA25ZAS1dQZAW5ray0xaGxiNlVLeVhGS0lDSzZA0dl9FQ2xWQ0tNOWwyQ0JqMEd3NHhMNkRhY1FlQkdoMFBaSDZApc2RJZAmxCaWVJTFFfNE9YanlxZAEVVNzJ4RlItVFZApM1ZAoUQZDZD";
+    "IGAAdfPZCw6k9xBZAFp0Ym1iQjFWbDQ2azVyTWxYM3FXLXl0UmdZARVYyZAXBiZAGt4RGJPMHZABN0JLaGFQeW0xMFEzNWZADSE5abnlOa3FvQ1F4ZATU1aWsxdEpmMVJGb1pDTnZA5RTlRUnQtYnBZANTZA4QjZAWMS1La0hiOEJsVlIyczR5YwZDZD";
 
   useEffect(() => {
     const fetchInstagramPosts = async () => {

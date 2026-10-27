@@ -9,10 +9,12 @@ const {
 
 const router = express.Router();
 
+// List products. Supports pagination via query params `?page=<number>&limit=<number>`
+// defaults to the first 100 products if not specified.
 router.get("/", fetchAllProducts); 
 
 router.get(
-  "/products/:productId",
+  "/products/:productId", // fetch single product by ID
   (req, res, next) => {
     // console.log("Route hit:", req.params.productId);
     next();

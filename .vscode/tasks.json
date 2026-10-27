@@ -1,0 +1,26 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Frontend: vite dev",
+      "type": "npm",
+      "script": "dev",
+      "path": "oneDegree",
+      "options": {
+        "cwd": "${workspaceFolder}/oneDegree"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "vite",
+        "pattern": {
+          "regexp": "^__never_match__$"
+        },
+        "background": {
+          "activeBegins": true,
+          "beginsPattern": "VITE v",
+          "endsPattern": "ready in"
+        }
+      }
+    }
+  ]
+}

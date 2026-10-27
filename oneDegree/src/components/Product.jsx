@@ -34,16 +34,10 @@ import menu4 from "../assets/menu-2.png";
 import menu6 from "../assets/menu-3.png";
 
 const Product = () => {
-  useAllProduct();
-  useGetMaterials();
-  useCollection();
-  useGetCategory();
-  useGetFinishing();
-  useGetFrameType();
-  useGetShape();
 
   const {
     allproduct,
+    productTotal,
     material,
     collection,
     category,
@@ -51,6 +45,16 @@ const Product = () => {
     FrameType,
     shape,
   } = useSelector((state) => state.AppSlice);
+
+  // custom hook fetches data whenever page or limit changes and also
+  // exposes meta through the store via selectors above
+  const { loading } = useAllProduct();
+  useGetMaterials();
+  useCollection();
+  useGetCategory();
+  useGetFinishing();
+  useGetFrameType();
+  useGetShape();
 
   const views = [
     { id: 3, src: menu3 },
@@ -538,11 +542,18 @@ const Product = () => {
         </div>
 
         {/* card */}
-        <ProductCard
-          items={filteredProducts}
-          filters={filters}
-          activeView={activeView}
-        />
+        {loading ? (
+          <div className="flex justify-center py-10">
+            <div className="w-8 h-8 border-4 border-gray-200 border-t-4 border-t-[#394731] rounded-full animate-spin" />
+          </div>
+        ) : (
+          <ProductCard
+            items={filteredProducts}
+            filters={filters}
+            activeView={activeView}
+          />
+        )}
+
       </div>
     </div>
   );

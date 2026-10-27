@@ -54,10 +54,13 @@ app.use("/api/newsletter", FooterEmail);
 app.get("/", (req, res) => {
   res.send("Welcome to the API!");
 });
+
+// simple request logger so we can tell if a route is hit
 app.use((req, res, next) => {
-  // console.log(`${req.method} ${req.path}`);
+  console.log(`${new Date().toISOString()} ${req.method} ${req.originalUrl}`);
   next();
 });
+
 app.listen(PORT, () => {
-  // console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

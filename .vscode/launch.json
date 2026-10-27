@@ -1,0 +1,40 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Backend (Node.js)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/server.js",
+      "restart": true,
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/backend"
+    },
+    {
+      "name": "Frontend (Chrome)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/oneDegree/src",
+      "sourceMaps": true,
+      "preLaunchTask": "Frontend: vite dev"
+    },
+    {
+      "name": "Backend (Nodemon)",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "nodemon",
+      "program": "${workspaceFolder}/backend/server.js",
+      "restart": true,
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/backend",
+      "internalConsoleOptions": "neverOpen"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full Stack (Backend + Frontend)",
+      "configurations": ["Backend (Nodemon)", "Frontend (Chrome)"]
+    }
+  ]
+}

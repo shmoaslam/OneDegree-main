@@ -32,7 +32,7 @@ import CollectionPage from "./CollectionPage";
 import { TestingUrl } from "@/shared/Constant";
 
 const FilterComponents = () => {
-  useAllProduct();
+  useAllProduct(0, 9, useParams().id);
   useGetMaterials();
   useCollection();
   useGetCategory();
